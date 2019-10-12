@@ -15,11 +15,11 @@ namespace ConsoleApplication1
             presenter = new Presenter();
             bool running = true;
 
-            Console.WriteLine("Press 1 to add value");
-            Console.WriteLine("Press 2 to remove value");
-            Console.WriteLine("Press 3 to print array");
-            Console.WriteLine("Press 4 to do task");
-            Console.WriteLine("Press e to exit");
+            Console.WriteLine("Press 1 to add value\n" +
+                              "Press 2 to remove value\n" +
+                              "Press 3 to print array\n" +
+                              "Press 4 to do task\n" +
+                              "Press e to exit");
            
             while (running)
             {
