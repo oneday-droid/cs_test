@@ -6,6 +6,12 @@ using System.Threading.Tasks;
 
 namespace ConsoleApplication1
 {
+    public enum SortType
+    {
+        Ascending = 0,
+        Descending
+    }
+
     class Program
     {
         static Presenter presenter;
@@ -18,7 +24,8 @@ namespace ConsoleApplication1
             Console.WriteLine("Press 1 to add value\n" +
                               "Press 2 to remove value\n" +
                               "Press 3 to print array\n" +
-                              "Press 4 to do task\n" +
+                              "Press 4 to descending sort even elements\n" +
+                              "Press 5 to ascending sort even elements\n" +
                               "Press e to exit");
            
             while (running)
@@ -31,8 +38,9 @@ namespace ConsoleApplication1
                     case "1": Add(); break;
                     case "2": Remove(); break;
                     case "3": Print(); break;
-                    case "4": DoTask(); break;
-                    case "5": Reset(); break;
+                    case "4": DoTask(SortType.Descending); break;
+                    case "5": DoTask(SortType.Descending); break;
+                    case "r": Reset(); break;
                     case "e": running = false; break; 
                     default: Console.WriteLine("Unknown command"); break;
                 }                    
@@ -81,9 +89,9 @@ namespace ConsoleApplication1
             presenter.Print();            
         }
 
-        static void DoTask()
+        static void DoTask(SortType sortOrder)
         {
-            presenter.Task();
+            presenter.Task(sortOrder);
             presenter.Print();
         }
 
@@ -156,7 +164,7 @@ namespace ConsoleApplication1
             Console.WriteLine("");
         }
 
-        public void Task()
+        public void Task(SortType sortOrder)
         {
             int[] sortArr = new int[count];
             Dictionary<int, int> valueIndexDict = new Dictionary<int, int>();
@@ -171,7 +179,11 @@ namespace ConsoleApplication1
                 }
             }
 
-            sortArr = DescendingSort(sortArr, itr);
+            switch(sortOrder)
+            {
+                case SortType.Descending: sortArr = DescendingSort(sortArr, itr); break;
+                case SortType.Ascending: sortArr = AscendingSort(sortArr, itr); break;
+            }            
 
             int sortIndex = 0;
             for (int k = 0; k < count; k++)
@@ -190,6 +202,22 @@ namespace ConsoleApplication1
             {
                 for (int j = 0; j < length - k - 1; j++)
                     if(sourceArray[j+1] < sourceArray[j])
+                    {
+                        int temp = sourceArray[j + 1];
+                        sourceArray[j + 1] = sourceArray[j];
+                        sourceArray[j] = temp;
+                    }
+            }
+
+            return sourceArray;
+        }
+
+        int[] AscendingSort(int[] sourceArray, int length)
+        {
+            for (int k = 0; k < length - 1; k++)
+            {
+                for (int j = 0; j < length - k - 1; j++)
+                    if (sourceArray[j + 1] > sourceArray[j])
                     {
                         int temp = sourceArray[j + 1];
                         sourceArray[j + 1] = sourceArray[j];
