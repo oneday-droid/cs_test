@@ -22,10 +22,14 @@ namespace ConsoleApplication1
             bool running = true;
 
             Console.WriteLine("Press 1 to add value\n" +
-                              "Press 2 to remove value\n" +
+                              "Press 2 to remove value by index\n" +
                               "Press 3 to print array\n" +
                               "Press 4 to descending sort even elements\n" +
                               "Press 5 to ascending sort even elements\n" +
+                              "Press 6 to remove first even element\n" +
+                              "Press 7 to remove first negative element\n" +
+                              "Press 8 to remove value entered by user\n" +
+                              "Press 9 to remove element that equal average value\n" +
                               "Press e to exit");
            
             while (running)
@@ -39,7 +43,11 @@ namespace ConsoleApplication1
                     case "2": Remove(); break;
                     case "3": Print(); break;
                     case "4": DoTask(SortType.Descending); break;
-                    case "5": DoTask(SortType.Descending); break;
+                    case "5": DoTask(SortType.Ascending); break;
+                    case "6": RemoveFirstEvenElement(); break;
+                    case "7": RemoveFirstNegativeElement(); break;
+                    case "8": RemoveElement(); break;
+                    case "9": RemoveAverage(); break;
                     case "r": Reset(); break;
                     case "e": running = false; break; 
                     default: Console.WriteLine("Unknown command"); break;
@@ -91,7 +99,7 @@ namespace ConsoleApplication1
 
         static void DoTask(SortType sortOrder)
         {
-            presenter.Task(sortOrder);
+            presenter.SortEvenElements(sortOrder);
             presenter.Print();
         }
 
@@ -100,132 +108,40 @@ namespace ConsoleApplication1
             presenter.Reset();
             presenter.Print();
         }
-    }
 
-    public class Presenter
-    {
-        int[] arr;
-        int count;
-        Random random;
-
-        public Presenter()
+        static void RemoveFirstEvenElement()
         {
-            count = 10;
-            arr = new int[count];
-            random = new Random();
-            
-            Reset();                        
+            int index = presenter.FindFirstEvenElementIndex();
+            presenter.RemoveValue(index);
         }
 
-        public void Reset()
-        {            
-            for (int k = 0; k < count; k++)
-                arr[k] = random.Next(0, 100);
-        }
-
-        public void AddValue(int value)
-        {            
-            int[] source = arr;
-            count++;
-
-            arr = new int[count];
-            for (int k = 0; k < count - 1; k++)
-                arr[k] = source[k];
-
-            arr[count - 1] = value;            
-        }
-
-        public bool RemoveValue(int index)
+        static void RemoveFirstNegativeElement()
         {
-            bool result = false;
-            if (index < count)
+            int index = presenter.FindFirstNegativeElementIndex();
+            presenter.RemoveValue(index);
+        }
+
+        static void RemoveElement()
+        {
+            Console.WriteLine("Enter new value");
+            string ch = Console.ReadLine();
+            try
             {
-                int[] source = arr;
-                arr = new int[count - 1];
-                int arrK = 0;
-                for (int k = 0; k < count; k++)
-                    if (k != index)
-                    {
-                        arr[arrK] = source[k];
-                        arrK++;
-                    }
-                count--;
-                result = true;
+                int value = Convert.ToInt32(ch);
+                int index = presenter.FindValueIndex(value);
+                presenter.RemoveValue(index);
             }
-
-            return result;
-        }
-
-        public void Print()
-        {
-            Console.WriteLine("Print array");
-            for (int k = 0; k < count; k++)
-                Console.Write("{0}; ", arr[k]);
-            Console.WriteLine("");
-        }
-
-        public void Task(SortType sortOrder)
-        {
-            int[] sortArr = new int[count];
-            Dictionary<int, int> valueIndexDict = new Dictionary<int, int>();
-            int itr = 0;
-            for (int k = 0; k < count; k++)
+            catch (Exception)
             {
-                if ((arr[k] % 2 == 0) && (arr[k] != 0))
-                {
-                    valueIndexDict.Add(k, arr[k]);
-                    sortArr[itr] = arr[k];
-                    itr++;
-                }
-            }
-
-            switch(sortOrder)
-            {
-                case SortType.Descending: sortArr = DescendingSort(sortArr, itr); break;
-                case SortType.Ascending: sortArr = AscendingSort(sortArr, itr); break;
+                Console.WriteLine("Incorrect value");
             }            
-
-            int sortIndex = 0;
-            for (int k = 0; k < count; k++)
-            {
-                if (valueIndexDict.ContainsKey(k))
-                {
-                    arr[k] = sortArr[sortIndex];
-                    sortIndex++;
-                }
-            }
         }
 
-        int[] DescendingSort(int[] sourceArray, int length)
+        static void RemoveAverage()
         {
-            for (int k = 0; k < length - 1; k++)
-            {
-                for (int j = 0; j < length - k - 1; j++)
-                    if(sourceArray[j+1] < sourceArray[j])
-                    {
-                        int temp = sourceArray[j + 1];
-                        sourceArray[j + 1] = sourceArray[j];
-                        sourceArray[j] = temp;
-                    }
-            }
-
-            return sourceArray;
+            int value = presenter.Calculate();
+            int index = presenter.FindValueIndex(value);
+            presenter.RemoveValue(index);
         }
-
-        int[] AscendingSort(int[] sourceArray, int length)
-        {
-            for (int k = 0; k < length - 1; k++)
-            {
-                for (int j = 0; j < length - k - 1; j++)
-                    if (sourceArray[j + 1] > sourceArray[j])
-                    {
-                        int temp = sourceArray[j + 1];
-                        sourceArray[j + 1] = sourceArray[j];
-                        sourceArray[j] = temp;
-                    }
-            }
-
-            return sourceArray;
-        }
-    }
+    }    
 }
